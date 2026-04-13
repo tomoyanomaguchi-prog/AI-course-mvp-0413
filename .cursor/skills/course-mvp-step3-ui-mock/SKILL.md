@@ -88,4 +88,5 @@ description: >-
 ## 追加リソース
 
 - Step2: `course-mvp-step2-story-scope`
+- **Step4**（モック了承後・実装〜ホスティング）: `course-mvp-step4-implement-host`
 - Day7: `docs/DAY1_DAY7_DAY14_CONTENT.md`

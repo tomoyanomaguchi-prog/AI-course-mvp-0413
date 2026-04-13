@@ -4,7 +4,7 @@
 
 ## Cursor Skill（クローン後に選べないとき）
 
-[`docs/CURSOR_SKILLS_SETUP.md`](docs/CURSOR_SKILLS_SETUP.md) — **リポジトリのルートを開く**こと・`@` で出ないときの対処。
+[`docs/CURSOR_SKILLS_SETUP.md`](docs/CURSOR_SKILLS_SETUP.md) — **リポジトリのルートを開く**こと・`@` で出ないときの対処。MVP の流れは [`docs/mvp/STEPS_MVP_FLOW.md`](docs/mvp/STEPS_MVP_FLOW.md)（Step1〜4）。
 
 ## すぐ読む順
 
