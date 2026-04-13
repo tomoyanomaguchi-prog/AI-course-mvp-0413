@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>型B — モバイル単柱＋大CTA（モック）</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 40%, #f8fafc 100%);
+      font-family: system-ui, sans-serif; color: #134e4a;
+    }
+    .wrap { max-width: 28rem; margin: 0 auto; min-height: 100vh; padding: 24px 20px 40px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .header-mini { font-size: 12px; color: #5eead4; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+    h2 { font-size: 22px; font-weight: 700; margin: 0 0 8px; color: #0f766e; line-height: 1.35; }
+    .today-line {
+      font-size: 15px; color: #115e59; line-height: 1.6; margin: 20px 0 28px;
+      padding: 16px; background: rgba(255,255,255,0.7); border-radius: 16px; border: 1px solid #99f6e4;
+    }
+    .cta {
+      width: 100%; padding: 18px 20px; font-size: 17px; font-weight: 700;
+      border: none; border-radius: 999px; cursor: pointer;
+      background: linear-gradient(135deg, #14b8a6, #0d9488); color: #fff;
+      box-shadow: 0 10px 30px -8px rgba(13, 148, 136, 0.55);
+    }
+    .cta:active { transform: scale(0.98); }
+    .sub { font-size: 13px; color: #5b908a; text-align: center; margin-top: 16px; }
+    .back {
+      display: inline-block; margin-top: 24px; font-size: 14px; color: #0f766e; text-decoration: none; font-weight: 500;
+    }
+    textarea {
+      width: 100%; min-height: 160px; padding: 16px; font-size: 15px; border-radius: 16px;
+      border: 1px solid #99f6e4; background: #fff; resize: vertical; font-family: inherit;
+    }
+    .save-row { margin-top: 16px; }
+    .btn-save {
+      width: 100%; padding: 14px; font-size: 16px; font-weight: 600; border: none; border-radius: 12px;
+      background: #0f766e; color: #fff; cursor: pointer;
+    }
+    .hint { font-size: 11px; color: #6b9088; margin-top: 32px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- 画面1: 今日の一行 + 大CTA -->
+    <div id="s1" class="screen active">
+      <p class="header-mini">habit memo</p>
+      <h2>今日の一行</h2>
+      <div class="today-line">
+        ダミー：Cursor で MVP の画面ラフまで終わらせる（実際の文言は受講生が入れます）
+      </div>
+      <button type="button" class="cta" onclick="document.getElementById('s1').classList.remove('active'); document.getElementById('s2').classList.add('active');">
+        記録する
+      </button>
+      <p class="sub">主ボタンが1つだけ。迷わせないレイアウトのイメージ。</p>
+      <p class="hint">型B：幅は max-width 28rem 前後。装飾は最小限。</p>
+    </div>
+    <!-- 画面2: テキスト + 保存 -->
+    <div id="s2" class="screen">
+      <p class="header-mini">記録</p>
+      <h2>内容を書く</h2>
+      <textarea placeholder="今日あったことを書く（ダミー）"></textarea>
+      <div class="save-row">
+        <button type="button" class="btn-save" onclick="document.getElementById('s2').classList.remove('active'); document.getElementById('s1').classList.add('active');">
+          保存して戻る
+        </button>
+      </div>
+      <a href="#" class="back" onclick="event.preventDefault(); document.getElementById('s2').classList.remove('active'); document.getElementById('s1').classList.add('active');">← キャンセル</a>
+    </div>
+  </div>
+</body>
+</html>

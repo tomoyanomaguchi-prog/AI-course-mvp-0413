@@ -1,0 +1,5 @@
+.DS_Store
+.obsidian/
+
+# 別リポジトリ（内側に .git があるため親リポジトリでは追跡しない）
+intern-es-mvp/

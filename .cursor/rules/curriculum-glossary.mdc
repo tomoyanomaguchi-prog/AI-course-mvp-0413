@@ -1,0 +1,13 @@
+---
+description: AIコース教材の用語・トーン（Markdown執筆時）
+globs: curriculum/**/*.md,docs/**/*.md
+---
+
+# 用語・トーン
+
+- **ハーネス**: プロンプト単発ではなく、目的・制約・検証手順を束ねること。
+- **MVP**: `docs/MVP_CHECKLIST.md` の必達に合致する成果物。
+- **開発の主役**: **Cursor ＋ Claude**。教材の手順・画面はこれを正とする。
+- **標準スタック（アプリ）**: Next.js + Vercel + Supabase（逸脱は附録扱いと明記）。
+- 受講者は初心者でもよい。嘲笑しない。エラーは「ログと検索語」と説明。
+- **v1** では **Manus は教材に出さない**。スタッフ用は `docs/manus_reference.md`。

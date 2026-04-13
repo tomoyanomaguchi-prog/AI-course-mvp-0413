@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>型C — カード一覧＋投稿（モック）</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: #fff7ed; font-family: system-ui, sans-serif; color: #431407;
+    }
+    .bar {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255, 247, 237, 0.92); backdrop-filter: blur(8px);
+      border-bottom: 1px solid #fed7aa; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .bar strong { font-size: 17px; }
+    .container { max-width: 520px; margin: 0 auto; padding: 16px 16px 100px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .card {
+      background: #fff; border-radius: 16px; padding: 16px 18px; margin-bottom: 14px;
+      box-shadow: 0 4px 14px -4px rgba(234, 88, 12, 0.2); border: 1px solid #ffedd5;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 16px; color: #9a3412; }
+    .card p { margin: 0; font-size: 14px; line-height: 1.55; color: #7c2d12; opacity: 0.92; }
+    .meta { font-size: 11px; color: #ea580c; margin-top: 10px; }
+    .fab {
+      position: fixed; right: 20px; bottom: 24px; z-index: 20;
+      width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
+      background: linear-gradient(145deg, #f97316, #ea580c); color: #fff;
+      font-size: 26px; line-height: 1; box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.55);
+    }
+    .fab span { position: relative; top: -2px; }
+    .form-panel {
+      background: #fff; border-radius: 20px; padding: 22px; border: 1px solid #fed7aa;
+      box-shadow: 0 8px 30px -12px rgba(234, 88, 12, 0.35);
+    }
+    .form-panel label { display: block; font-size: 12px; font-weight: 700; color: #c2410c; margin-bottom: 6px; }
+    .form-panel input, .form-panel textarea {
+      width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #fdba74; font-size: 15px; margin-bottom: 14px; font-family: inherit;
+    }
+    .form-panel textarea { min-height: 120px; resize: vertical; }
+    .row-btns { display: flex; gap: 10px; margin-top: 8px; }
+    .btn-p { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 15px; }
+    .btn-post { background: #ea580c; color: #fff; }
+    .btn-cancel { background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
+    .hint { font-size: 11px; color: #b45309; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <strong>班内掲示板（モック）</strong>
+    <span style="font-size:12px;color:#c2410c;">ダミー</span>
+  </div>
+  <div class="container">
+    <!-- 画面1: カード一覧 -->
+    <div id="list" class="screen active">
+      <div class="card">
+        <h3>Day7 の発表、時間厳守で</h3>
+        <p>スライドは前日までに共有してね、というダミー本文です。カードは div の繰り返しで十分。</p>
+        <div class="meta">2時間前 · ダミー太郎</div>
+      </div>
+      <div class="card">
+        <h3>環境変数は .env のみ</h3>
+        <p>リポジトリに鍵を貼らない。チェックリストのダミー注意書き。</p>
+        <div class="meta">昨日 · ダミー花子</div>
+      </div>
+      <div class="card">
+        <h3>メンター OH の置き場所</h3>
+        <p>チャンネル名は運営の案内に従う、という2行目のダミー。</p>
+        <div class="meta">3日前 · ダミー次郎</div>
+      </div>
+      <p class="hint">右下の＋で投稿画面へ（FAB のイメージ）。</p>
+    </div>
+    <!-- 画面2: 投稿 -->
+    <div id="compose" class="screen">
+      <div class="form-panel">
+        <label>タイトル</label>
+        <input type="text" placeholder="例：週次の振り返り" />
+        <label>本文</label>
+        <textarea placeholder="本文を書く（ダミー）"></textarea>
+        <div class="row-btns">
+          <button type="button" class="btn-p btn-cancel" onclick="showList()">キャンセル</button>
+          <button type="button" class="btn-p btn-post" onclick="showList()">投稿する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="fab" onclick="showCompose()" aria-label="投稿"><span>＋</span></button>
+  <script>
+    function showCompose() {
+      document.getElementById('list').classList.remove('active');
+      document.getElementById('compose').classList.add('active');
+      document.querySelector('.fab').style.display = 'none';
+    }
+    function showList() {
+      document.getElementById('compose').classList.remove('active');
+      document.getElementById('list').classList.add('active');
+      document.querySelector('.fab').style.display = '';
+    }
+  </script>
+</body>
+</html>
