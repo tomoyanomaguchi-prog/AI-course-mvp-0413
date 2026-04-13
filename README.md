@@ -2,6 +2,10 @@
 
 プランに基づき、運営・教材・スプレッドシート用テンプレをこのフォルダに配置している。
 
+## Cursor Skill（クローン後に選べないとき）
+
+[`docs/CURSOR_SKILLS_SETUP.md`](docs/CURSOR_SKILLS_SETUP.md) — **リポジトリのルートを開く**こと・`@` で出ないときの対処。
+
 ## すぐ読む順
 
 1. [`docs/course_overview_1pager.md`](docs/course_overview_1pager.md) — 概要  
