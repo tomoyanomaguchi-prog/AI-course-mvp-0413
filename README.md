@@ -6,6 +6,13 @@
 
 [`docs/CURSOR_SKILLS_SETUP.md`](docs/CURSOR_SKILLS_SETUP.md) — **リポジトリのルートを開く**こと・`@` で出ないときの対処。MVP の流れは [`docs/mvp/STEPS_MVP_FLOW.md`](docs/mvp/STEPS_MVP_FLOW.md)（Step1〜4）。
 
+## 受講生向け: 日用品 MVP の実装（Next アプリ）
+
+- アプリ本体: [`web/README.md`](web/README.md)（**`web/` で `npm install` / `npm run dev`**）
+- UI モック（外側）: [`docs/mvp/STEP3_UI_MOCK.html`](docs/mvp/STEP3_UI_MOCK.html)
+- G5 指示テンプレ: [`docs/mvp/G5_CURSOR_PROMPT_TEMPLATE_HOUSEHOLD.md`](docs/mvp/G5_CURSOR_PROMPT_TEMPLATE_HOUSEHOLD.md)
+- DB 初期 SQL: [`web/supabase/migrations/001_init.sql`](web/supabase/migrations/001_init.sql)
+
 ## すぐ読む順
 
 1. [`docs/course_overview_1pager.md`](docs/course_overview_1pager.md) — 概要  

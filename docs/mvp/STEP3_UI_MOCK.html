@@ -3,27 +3,299 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Step3 モック（テンプレ）</title>
+  <title>Step3 UIモック — 日用品リマインダー（S1/S2）</title>
+  <!--
+    テーマ: 日用品の買い忘れ防止（会話の Step2 に準拠）。
+    リポジトリの STEP2_STORY_SCENARIO.md が別テーマの場合は、提出前に Step2 を同テーマで揃えること。
+    静的モック: 保存・DB・認証はしない。主導線の説明用（G4）。
+  -->
   <style>
-    body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-    .hint { font-size: 12px; color: #64748b; margin-bottom: 20px; padding: 12px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px; }
-    .screen { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 16px; max-width: 40rem; }
-    h2 { margin: 0 0 12px; font-size: 16px; }
-    .placeholder { color: #94a3b8; font-size: 14px; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif; background: #f0fdf4; color: #14532d; font-size: 14px; }
+    .app { display: flex; min-height: 100vh; }
+    .nav {
+      width: 210px; background: #166534; color: #dcfce7; padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .nav h1 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; margin: 0 0 14px; color: #86efac; text-transform: uppercase; }
+    .nav a {
+      color: #bbf7d0; text-decoration: none; padding: 8px 10px; border-radius: 6px; font-size: 13px;
+    }
+    .nav a:hover { background: #15803d; color: #fff; }
+    .nav a.active { background: #22c55e; color: #052e16; font-weight: 600; }
+    .nav .muted { font-size: 11px; color: #86efac; margin-top: auto; padding: 10px; line-height: 1.5; }
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .topbar {
+      background: #fff; border-bottom: 1px solid #bbf7d0; padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .topbar span { font-weight: 600; font-size: 15px; color: #166534; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 8px 14px; border-radius: 6px; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 500;
+    }
+    .btn-primary { background: #16a34a; color: #fff; }
+    .btn-primary:hover { background: #15803d; }
+    .btn-ghost { background: #fff; color: #166534; border: 1px solid #86efac; }
+    .btn-accent { background: #22c55e; color: #052e16; }
+    .btn-accent:hover { background: #16a34a; color: #fff; }
+    .btn-danger { background: #fff; color: #b91c1c; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fef2f2; }
+    .content { padding: 20px; flex: 1; max-width: 720px; width: 100%; margin: 0 auto; }
+    .panel { background: #fff; border: 1px solid #bbf7d0; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 2px rgba(20, 83, 45, 0.06); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid #ecfccb; }
+    th { background: #f7fee7; font-size: 12px; color: #3f6212; font-weight: 600; }
+    tr[data-row]:hover td { background: #f7fee7; cursor: pointer; }
+    .badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+    .badge-soon { background: #fef3c7; color: #92400e; }
+    .badge-ok { background: #dcfce7; color: #166534; }
+    .badge-urgent { background: #fee2e2; color: #991b1b; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: #365314; margin-bottom: 6px; }
+    .form-group input { width: 100%; padding: 8px 10px; border: 1px solid #86efac; border-radius: 6px; font-size: 13px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; align-items: center; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .hint {
+      font-size: 11px; color: #4d7c0f; margin-top: 14px; padding: 10px 12px; background: #f7fee7;
+      border-radius: 6px; border: 1px dashed #a3e635; line-height: 1.5;
+    }
+    .hypothesis {
+      background: #ecfccb; border: 1px solid #bef264; border-left: 4px solid #65a30d;
+      border-radius: 6px; padding: 10px 12px; font-size: 12px; color: #3f6212; margin-bottom: 14px; line-height: 1.5;
+    }
+    .hypothesis strong { color: #365314; }
+    .back { font-size: 13px; color: #15803d; background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; margin-bottom: 12px; }
+    .pad { padding: 20px; }
+    .sub { font-size: 12px; color: #4d7c0f; margin-top: 4px; }
+    .photo-box {
+      border: 1px dashed #86efac; border-radius: 8px; padding: 12px; background: #f7fee7;
+    }
+    .photo-preview-wrap { margin-top: 10px; display: none; }
+    .photo-preview-wrap img {
+      max-width: 100%; max-height: 220px; border-radius: 8px; border: 1px solid #bbf7d0;
+      display: block;
+    }
+    .photo-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+    .thumb { font-size: 12px; color: #64748b; }
+    .thumb-yes { color: #166534; font-weight: 600; }
   </style>
 </head>
 <body>
-  <p class="hint">
-    Step2 の <strong>画面ID（S1 / S2…）</strong> と「確認できること」に合わせて置き換えてください。<br />
-    Skill: <code>course-mvp-step3-ui-mock</code>。型 A〜D は任意の参考（<code>docs/mvp/STEP2_MOCK_TYPE_EXAMPLES.md</code>）。
-  </p>
-  <div class="screen" id="s1">
-    <h2>画面 S1（名前を書く）</h2>
-    <p class="placeholder">ここに Step2 で定めた「確認できること」を UI の箱として置く。</p>
+  <div class="app">
+    <aside class="nav">
+      <h1>日用品リマインダー</h1>
+      <a href="#" class="active" id="nav-s1" onclick="showS1(); return false;">一覧（S1）</a>
+      <a href="#" id="nav-s2" onclick="showS2New(); return false;">品目を追加（S2）</a>
+      <p class="muted">静的モック（1ファイル）。通知・外部カレンダー・Web商品マスタはスコープ外（Step2 削定）。</p>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <span id="pageTitle">日用品一覧（S1）</span>
+        <button type="button" class="btn btn-primary" id="btnTopAdd" onclick="showS2New()">＋ 日用品を追加</button>
+      </header>
+      <div class="content">
+        <!-- S1 -->
+        <section id="screen-s1" class="screen active" aria-label="S1 日用品一覧">
+          <div class="hypothesis">
+            <strong>主導線（モック）</strong>：店に行く前に「次回購入目安が近い順」で一覧を見る → 品目を開いて購入日を記録 → 一覧に戻ると並び・強調が更新される想定。
+          </div>
+          <div class="panel">
+            <table>
+              <thead>
+                <tr>
+                  <th>品目</th>
+                  <th>次回購入の目安</th>
+                  <th>直近の購入写真</th>
+                  <th>状態</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-row onclick="showS2Edit('シャンプー')">
+                  <td>シャンプー</td>
+                  <td>2026-04-14</td>
+                  <td class="thumb"><span class="thumb-yes">あり（想定）</span></td>
+                  <td><span class="badge badge-urgent">要確認</span></td>
+                </tr>
+                <tr data-row onclick="showS2Edit('トイレットペーパー')">
+                  <td>トイレットペーパー</td>
+                  <td>2026-04-18</td>
+                  <td class="thumb">—</td>
+                  <td><span class="badge badge-soon">そろそろ</span></td>
+                </tr>
+                <tr data-row onclick="showS2Edit('食器用洗剤')">
+                  <td>食器用洗剤</td>
+                  <td>2026-05-02</td>
+                  <td class="thumb">—</td>
+                  <td><span class="badge badge-ok">余裕</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="hint">※ 近い順の並び・バッジはダミー。本番では購入記録から算出。行タップで <strong>S2</strong>（登録・編集・購入記録）。</p>
+          </div>
+        </section>
+
+        <!-- S2 -->
+        <section id="screen-s2" class="screen" aria-label="S2 登録・編集・購入記録">
+          <button type="button" class="back" onclick="showS1()">← 一覧へ戻る</button>
+          <div class="hypothesis">
+            <strong>S2 で確認できること</strong>：品目の特定／次回目安（手入力 or 計算）／購入日の記録／<strong>購入した商品の写真（任意）</strong>／保存・一覧へ／編集・削除。
+          </div>
+          <div class="panel pad">
+            <p class="sub" id="s2Mode">編集</p>
+            <h2 style="margin:0 0 16px;font-size:18px;color:#14532d;" id="s2Title">日用品の登録・編集</h2>
+
+            <div class="form-group">
+              <label for="f-name">品目名</label>
+              <input type="text" id="f-name" placeholder="例: シャンプー" value="シャンプー" />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="f-next">次回購入の目安（手入力）</label>
+                <input type="date" id="f-next" value="2026-04-14" />
+              </div>
+              <div class="form-group">
+                <label for="f-last">前回の購入日（参考）</label>
+                <input type="date" id="f-last" value="2026-03-10" />
+              </div>
+            </div>
+
+            <p style="font-size:12px;font-weight:600;color:#365314;margin:18px 0 8px;">目安の計算（任意・モック）</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="f-cap">全容量（例: ml）</label>
+                <input type="number" id="f-cap" placeholder="500" value="500" />
+              </div>
+              <div class="form-group">
+                <label for="f-daily">1日あたりの使用量（例: ml）</label>
+                <input type="number" id="f-daily" placeholder="5" value="5" step="0.1" />
+              </div>
+            </div>
+            <p class="sub">本番では式で目安を提案→ユーザーが確定、などに収める想定（外部商品マスタは使わない）。</p>
+
+            <p style="font-size:12px;font-weight:600;color:#365314;margin:18px 0 8px;">購入した商品の写真（任意）</p>
+            <div class="photo-box">
+              <label for="f-photo" style="font-size:12px;font-weight:600;color:#365314;">レシートや商品パッケージの写真</label>
+              <input type="file" id="f-photo" accept="image/*" style="margin-top:8px;font-size:13px;width:100%;" onchange="onPhotoSelect(event)" />
+              <div id="photo-preview-wrap" class="photo-preview-wrap" aria-live="polite">
+                <img id="photo-preview" alt="選択した画像のプレビュー" />
+              </div>
+              <div class="photo-actions">
+                <button type="button" class="btn btn-ghost" onclick="clearPhoto()">写真をクリア</button>
+              </div>
+              <p class="sub" style="margin-top:8px;margin-bottom:0;">モック: ブラウザ内プレビューのみ。アップロード・保存はしません（本番は Supabase Storage 等で本人のみ）。</p>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn btn-accent" onclick="mockPurchase()">今日買った（購入日を記録）</button>
+              <button type="button" class="btn btn-primary" onclick="mockSave()">保存（モック）</button>
+              <button type="button" class="btn btn-danger" onclick="mockDelete()">削除（モック）</button>
+            </div>
+            <p class="hint">「保存」「購入記録」は <code>alert</code> のみ。DB・画像ストレージ接続なし。</p>
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
-  <div class="screen" id="s2">
-    <h2>画面 S2（名前を書く）</h2>
-    <p class="placeholder">同一ファイル内で画面切替（JS）でも、縦に並べてもよい。</p>
-  </div>
+
+  <script>
+    function revokePhotoUrl() {
+      var img = document.getElementById("photo-preview");
+      if (img && img.dataset.blobUrl) {
+        URL.revokeObjectURL(img.dataset.blobUrl);
+        delete img.dataset.blobUrl;
+      }
+    }
+
+    function clearPhoto() {
+      var input = document.getElementById("f-photo");
+      if (input) input.value = "";
+      revokePhotoUrl();
+      var img = document.getElementById("photo-preview");
+      var wrap = document.getElementById("photo-preview-wrap");
+      if (img) {
+        img.removeAttribute("src");
+        img.style.display = "none";
+      }
+      if (wrap) wrap.style.display = "none";
+    }
+
+    function onPhotoSelect(ev) {
+      var f = ev.target.files && ev.target.files[0];
+      var wrap = document.getElementById("photo-preview-wrap");
+      var img = document.getElementById("photo-preview");
+      revokePhotoUrl();
+      if (!f || !f.type || f.type.indexOf("image/") !== 0) {
+        if (wrap) wrap.style.display = "none";
+        return;
+      }
+      var url = URL.createObjectURL(f);
+      img.dataset.blobUrl = url;
+      img.src = url;
+      img.style.display = "block";
+      wrap.style.display = "block";
+    }
+
+    function showS1() {
+      document.getElementById("screen-s1").classList.add("active");
+      document.getElementById("screen-s2").classList.remove("active");
+      document.getElementById("pageTitle").textContent = "日用品一覧（S1）";
+      document.getElementById("btnTopAdd").style.display = "";
+      document.getElementById("nav-s1").classList.add("active");
+      document.getElementById("nav-s2").classList.remove("active");
+    }
+
+    function showS2Common(title, mode, name, nextD, lastD) {
+      clearPhoto();
+      document.getElementById("screen-s1").classList.remove("active");
+      document.getElementById("screen-s2").classList.add("active");
+      document.getElementById("pageTitle").textContent = "品目の登録・編集（S2）";
+      document.getElementById("btnTopAdd").style.display = "none";
+      document.getElementById("nav-s1").classList.remove("active");
+      document.getElementById("nav-s2").classList.add("active");
+      document.getElementById("s2Title").textContent = title;
+      document.getElementById("s2Mode").textContent = mode;
+      document.getElementById("f-name").value = name;
+      document.getElementById("f-next").value = nextD;
+      document.getElementById("f-last").value = lastD;
+    }
+
+    function showS2Edit(name) {
+      var map = {
+        "シャンプー": { next: "2026-04-14", last: "2026-03-10" },
+        "トイレットペーパー": { next: "2026-04-18", last: "2026-03-20" },
+        "食器用洗剤": { next: "2026-05-02", last: "2026-03-01" }
+      };
+      var d = map[name] || { next: "2026-04-20", last: "2026-03-15" };
+      showS2Common(name + " を編集", "編集", name, d.next, d.last);
+    }
+
+    function showS2New() {
+      showS2Common("日用品を追加", "新規", "", "2026-04-20", "");
+    }
+
+    function mockPurchase() {
+      var has = document.getElementById("f-photo") && document.getElementById("f-photo").files && document.getElementById("f-photo").files.length;
+      alert("モック: 今日の日付を購入日として記録し、次回目安を更新する想定（実装ではDB更新）。" + (has ? "\n※ 選択中の写真は購入記録に紐づけて保存する想定。" : ""));
+    }
+
+    function mockSave() {
+      var has = document.getElementById("f-photo") && document.getElementById("f-photo").files && document.getElementById("f-photo").files.length;
+      alert("モック: 保存しました。一覧（S1）に戻ると並び・バッジが更新される想定。" + (has ? "\n※ 写真は Storage に上げ、一覧の「直近の購入写真」に反映する想定。" : ""));
+      showS1();
+    }
+
+    function mockDelete() {
+      if (confirm("モック: この品目を削除しますか？")) {
+        alert("モック: 削除しました。");
+        showS1();
+      }
+    }
+  </script>
 </body>
 </html>

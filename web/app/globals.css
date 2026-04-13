@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f0fdf4;
+  --fg: #14532d;
+  --card: #ffffff;
+  --border: #bbf7d0;
+  --accent: #16a34a;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
