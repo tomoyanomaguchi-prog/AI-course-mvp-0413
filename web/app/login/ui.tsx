@@ -10,8 +10,9 @@ function SubmitButton() {
   return (
     <button
       type="submit"
-      className="mt-4 w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60"
+      className="mt-4 w-full touch-manipulation rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 active:opacity-90 disabled:opacity-60"
       disabled={pending}
+      aria-busy={pending}
     >
       {pending ? "送信中…" : "ログインリンクを送る"}
     </button>

@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { headers } from "next/headers";
+import { resolveSiteOrigin } from "@/lib/site-origin";
 
 export type LoginState = { ok?: boolean; error?: string };
 
@@ -31,11 +31,7 @@ export async function loginAction(
     };
   }
 
-  const headersList = await headers();
-  const origin =
-    headersList.get("origin") ??
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    "http://localhost:3000";
+  const origin = await resolveSiteOrigin();
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithOtp({
@@ -46,6 +42,13 @@ export async function loginAction(
   });
 
   if (error) {
+    const msg = error.message.toLowerCase();
+    if (msg.includes("rate limit") || msg.includes("too many requests")) {
+      return {
+        error:
+          "メール送信の上限に達しています（短時間に何度も送った、またはプロジェクト全体の上限です）。しばらく待ってから再度お試しください。開発中は Supabase ダッシュボードの Authentication → Rate Limits で OTP の間隔・回数を緩めるか、カスタム SMTP を設定すると改善しやすいです。",
+      };
+    }
     return { error: error.message };
   }
   return { ok: true };

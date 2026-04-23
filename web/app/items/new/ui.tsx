@@ -5,13 +5,24 @@ import { createItemAction, type ItemFormState } from "../actions";
 
 const initial: ItemFormState = {};
 
+function plusDaysFromToday(days: number): string {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
-      className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60"
+      className="touch-manipulation rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 active:opacity-90 disabled:opacity-60"
       disabled={pending}
+      aria-busy={pending}
     >
       {pending ? "保存中…" : label}
     </button>
@@ -20,6 +31,7 @@ function SubmitButton({ label }: { label: string }) {
 
 export function NewItemForm() {
   const [state, formAction] = useFormState(createItemAction, initial);
+  const defaultNextDate = plusDaysFromToday(14);
 
   return (
     <form
@@ -34,6 +46,7 @@ export function NewItemForm() {
           id="name"
           name="name"
           required
+          autoFocus
           className="mt-1 w-full rounded-md border border-green-200 px-3 py-2 text-sm outline-none ring-green-500 focus:ring-2"
           placeholder="例: シャンプー"
         />
@@ -48,6 +61,7 @@ export function NewItemForm() {
             name="next_purchase_on"
             type="date"
             required
+            defaultValue={defaultNextDate}
             className="mt-1 w-full rounded-md border border-green-200 px-3 py-2 text-sm outline-none ring-green-500 focus:ring-2"
           />
         </div>

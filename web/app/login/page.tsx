@@ -31,12 +31,14 @@ export default async function LoginPage({
               <code>missing_code</code>）。
               <br />
               <span className="mt-1 block text-xs leading-relaxed">
-                対処: メール内のリンクを<strong>もう一度タップ</strong>する／別ブラウザで開く。
-                Supabase の <strong>Redirect URLs</strong> に{" "}
-                <code className="break-all">http://localhost:3000/auth/callback</code> と、実際に開いている
-                URL（<code>127.0.0.1</code> ならそちらも）を入れる。Site URL がルートだけの場合は{" "}
-                <code>/?code=</code> でも受け取れるようになっています。
+                対処: メール内のリンクを<strong>1回だけ</strong>タップし、ログイン操作したのと同じブラウザで開いてください。
+                それでも失敗する場合は Supabase の <strong>Redirect URLs</strong> に現在の公開 URL の{" "}
+                <code className="break-all">/auth/callback</code> が入っているか確認してください。
               </span>
+            </>
+          ) : authErr === "exchange" ? (
+            <>
+              セッション作成に失敗しました（<code>exchange</code>）。リンク期限切れ、または同じリンクの再利用の可能性があります。新しいログインリンクを送ってください。
             </>
           ) : authErr === "verify" ? (
             <>

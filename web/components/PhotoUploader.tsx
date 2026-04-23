@@ -40,28 +40,32 @@ export function PhotoUploader({ itemId, userId, initialPath }: Props) {
       return;
     }
 
-    startTransition(async () => {
-      const res = await updatePhotoPathAction(itemId, objectPath);
-      if (res.error) {
-        setError(res.error);
-        return;
-      }
-      setMessage("写真を保存しました。");
-      router.refresh();
+    startTransition(() => {
+      void (async () => {
+        const res = await updatePhotoPathAction(itemId, objectPath);
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
+        setMessage("写真を保存しました。");
+        router.refresh();
+      })();
     });
   }
 
   function onClear() {
     setMessage(null);
     setError(null);
-    startTransition(async () => {
-      const res = await clearPhotoAction(itemId);
-      if (res.error) {
-        setError(res.error);
-        return;
-      }
-      setMessage("写真を削除しました。");
-      router.refresh();
+    startTransition(() => {
+      void (async () => {
+        const res = await clearPhotoAction(itemId);
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
+        setMessage("写真を削除しました。");
+        router.refresh();
+      })();
     });
   }
 
@@ -74,18 +78,23 @@ export function PhotoUploader({ itemId, userId, initialPath }: Props) {
       <input
         type="file"
         accept="image/*"
-        className="mt-3 block w-full text-sm"
+        className="mt-3 block w-full touch-manipulation text-sm file:mr-3 file:rounded-md file:border-0 file:bg-green-600 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-green-700"
         disabled={pending}
         onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
       />
+      {pending ? (
+        <p className="mt-2 text-xs font-medium text-green-800" aria-live="polite">
+          処理中です。完了までそのままお待ちください…
+        </p>
+      ) : null}
       {initialPath ? (
         <button
           type="button"
-          className="mt-3 rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm text-red-800 hover:bg-red-50"
+          className="mt-3 touch-manipulation rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm text-red-800 hover:bg-red-50 active:opacity-90 disabled:opacity-60"
           disabled={pending}
           onClick={onClear}
         >
-          写真をクリア
+          {pending ? "処理中…" : "写真をクリア"}
         </button>
       ) : null}
       {message ? <p className="mt-2 text-sm text-green-800">{message}</p> : null}

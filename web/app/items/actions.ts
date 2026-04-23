@@ -50,7 +50,7 @@ export async function createItemAction(
 
   if (error) return { error: error.message };
   revalidatePath("/items");
-  redirect("/items");
+  redirect("/items?notice=" + encodeURIComponent("品目を追加しました。"));
 }
 
 export async function updateItemAction(
@@ -89,7 +89,7 @@ export async function updateItemAction(
   if (error) return { error: error.message };
   revalidatePath("/items");
   revalidatePath(`/items/${itemId}`);
-  redirect("/items");
+  redirect("/items?notice=" + encodeURIComponent("品目を更新しました。"));
 }
 
 export async function deleteItemFormAction(formData: FormData) {
@@ -118,7 +118,7 @@ export async function deleteItemFormAction(formData: FormData) {
     redirect(`/items/${itemId}?error=` + encodeURIComponent(error.message));
   }
   revalidatePath("/items");
-  redirect("/items");
+  redirect("/items?notice=" + encodeURIComponent("品目を削除しました。"));
 }
 
 export async function recordPurchaseTodayFormAction(formData: FormData) {
@@ -164,7 +164,7 @@ export async function recordPurchaseTodayFormAction(formData: FormData) {
   }
   revalidatePath("/items");
   revalidatePath(`/items/${itemId}`);
-  redirect(`/items/${itemId}`);
+  redirect(`/items/${itemId}?notice=` + encodeURIComponent("購入日を記録しました。"));
 }
 
 export async function updatePhotoPathAction(itemId: string, photoPath: string | null) {

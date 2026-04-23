@@ -4,7 +4,12 @@ import { badgeForNextPurchase, badgeLabel } from "@/lib/dates";
 import { signedPhotoUrl } from "@/lib/storage";
 import type { ItemRow } from "@/lib/types";
 
-export default async function ItemsListPage() {
+export default async function ItemsListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ notice?: string; error?: string }>;
+}) {
+  const sp = await searchParams;
   const supabase = await createSupabaseServerClient();
   const { data: rows, error } = await supabase
     .from("items")
@@ -29,6 +34,16 @@ export default async function ItemsListPage() {
 
   return (
     <div>
+      {sp.notice ? (
+        <p className="mb-3 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-900" role="status">
+          {sp.notice}
+        </p>
+      ) : null}
+      {sp.error ? (
+        <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800" role="alert">
+          {sp.error}
+        </p>
+      ) : null}
       <div className="mb-4 rounded-lg border border-lime-200 bg-lime-50 p-3 text-sm text-green-900">
         <strong>主導線</strong>: 店に行く前に「次回購入目安が近い順」で確認 → 行を開いて購入記録・保存。
       </div>
@@ -37,13 +52,21 @@ export default async function ItemsListPage() {
           <h1 className="text-lg font-semibold text-green-900">日用品一覧（S1）</h1>
           <Link
             href="/items/new"
-            className="hidden rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 md:inline-flex"
+            className="hidden touch-manipulation rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 active:opacity-90 md:inline-flex"
           >
             ＋ 日用品を追加
           </Link>
         </div>
         {withUrls.length === 0 ? (
-          <p className="p-6 text-sm text-green-800">まだ品目がありません。「日用品を追加」から登録してください。</p>
+          <div className="p-6">
+            <p className="text-sm text-green-800">まだ品目がありません。まず1つ登録すると、次回購入の目安を管理できます。</p>
+            <Link
+              href="/items/new"
+              className="mt-3 inline-flex touch-manipulation rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 active:opacity-90"
+            >
+              ＋ はじめての日用品を追加
+            </Link>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm">
@@ -67,7 +90,10 @@ export default async function ItemsListPage() {
                   return (
                     <tr key={it.id} className="border-b border-green-50 hover:bg-lime-50/60">
                       <td className="px-4 py-3">
-                        <Link href={`/items/${it.id}`} className="font-medium text-green-900 underline">
+                        <Link
+                          href={`/items/${it.id}`}
+                          className="touch-manipulation font-medium text-green-900 underline active:opacity-80"
+                        >
                           {it.name}
                         </Link>
                       </td>

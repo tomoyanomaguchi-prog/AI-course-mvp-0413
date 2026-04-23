@@ -3,8 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signedPhotoUrl } from "@/lib/storage";
 import type { ItemRow } from "@/lib/types";
-import { deleteItemFormAction, recordPurchaseTodayFormAction } from "../actions";
 import { PhotoUploader } from "@/components/PhotoUploader";
+import { DeleteItemForm, RecordPurchaseForm } from "./action-forms";
 import { EditItemForm } from "./ui";
 
 export default async function ItemDetailPage({
@@ -12,7 +12,7 @@ export default async function ItemDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; notice?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
@@ -43,6 +43,9 @@ export default async function ItemDetailPage({
       {sp.error ? (
         <p className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{sp.error}</p>
       ) : null}
+      {sp.notice ? (
+        <p className="mt-3 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-900">{sp.notice}</p>
+      ) : null}
 
       <h1 className="mt-3 text-xl font-semibold text-green-900">{item.name} を編集（S2）</h1>
       <p className="mt-2 text-sm text-green-800/90">購入記録・写真は任意。目安の自動計算は容量÷日量が両方あるとき優先、なければ+14日。</p>
@@ -60,27 +63,11 @@ export default async function ItemDetailPage({
 
       <PhotoUploader itemId={item.id} userId={user.id} initialPath={item.photo_path} />
 
-      <form action={recordPurchaseTodayFormAction} className="mt-4">
-        <input type="hidden" name="item_id" value={item.id} />
-        <button
-          type="submit"
-          className="rounded-lg bg-lime-500 px-4 py-2 text-sm font-semibold text-green-950 hover:bg-lime-400"
-        >
-          今日買った（購入日を記録）
-        </button>
-      </form>
+      <RecordPurchaseForm itemId={item.id} />
 
       <EditItemForm item={item} />
 
-      <form action={deleteItemFormAction} className="mt-6 border-t border-dashed border-green-200 pt-4">
-        <input type="hidden" name="item_id" value={item.id} />
-        <button
-          type="submit"
-          className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-800 hover:bg-red-50"
-        >
-          削除
-        </button>
-      </form>
+      <DeleteItemForm itemId={item.id} />
     </div>
   );
 }

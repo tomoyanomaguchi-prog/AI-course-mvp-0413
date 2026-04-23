@@ -6,7 +6,11 @@ export async function updateSession(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !anon) {
-    return supabaseResponse;
+    const pathname = request.nextUrl.pathname;
+    if (pathname === "/env-missing") {
+      return supabaseResponse;
+    }
+    return NextResponse.redirect(new URL("/env-missing", request.url));
   }
   const supabase = createServerClient(url, anon, {
     cookies: {

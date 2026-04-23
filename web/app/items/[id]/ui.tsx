@@ -2,6 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { updateItemAction, type ItemFormState } from "../actions";
+import { toDateInputValue } from "@/lib/dates";
 import type { ItemRow } from "@/lib/types";
 
 function SubmitButton({ label }: { label: string }) {
@@ -9,8 +10,9 @@ function SubmitButton({ label }: { label: string }) {
   return (
     <button
       type="submit"
-      className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60"
+      className="touch-manipulation rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 active:opacity-90 disabled:opacity-60"
       disabled={pending}
+      aria-busy={pending}
     >
       {pending ? "保存中…" : label}
     </button>
@@ -45,7 +47,7 @@ export function EditItemForm({ item }: { item: ItemRow }) {
             name="next_purchase_on"
             type="date"
             required
-            defaultValue={item.next_purchase_on}
+            defaultValue={toDateInputValue(item.next_purchase_on)}
             className="mt-1 w-full rounded-md border border-green-200 px-3 py-2 text-sm outline-none ring-green-500 focus:ring-2"
           />
         </div>
@@ -57,7 +59,7 @@ export function EditItemForm({ item }: { item: ItemRow }) {
             id="last_purchased_on"
             name="last_purchased_on"
             type="date"
-            defaultValue={item.last_purchased_on ?? ""}
+            defaultValue={toDateInputValue(item.last_purchased_on)}
             className="mt-1 w-full rounded-md border border-green-200 px-3 py-2 text-sm outline-none ring-green-500 focus:ring-2"
           />
         </div>
@@ -73,7 +75,7 @@ export function EditItemForm({ item }: { item: ItemRow }) {
             type="number"
             min={0}
             step="1"
-            defaultValue={item.total_capacity_ml ?? ""}
+            defaultValue={item.total_capacity_ml != null ? String(item.total_capacity_ml) : ""}
             className="mt-1 w-full rounded-md border border-green-200 px-3 py-2 text-sm outline-none ring-green-500 focus:ring-2"
           />
         </div>
@@ -87,7 +89,7 @@ export function EditItemForm({ item }: { item: ItemRow }) {
             type="number"
             min={0}
             step="0.1"
-            defaultValue={item.daily_use_ml ?? ""}
+            defaultValue={item.daily_use_ml != null ? String(item.daily_use_ml) : ""}
             className="mt-1 w-full rounded-md border border-green-200 px-3 py-2 text-sm outline-none ring-green-500 focus:ring-2"
           />
         </div>
